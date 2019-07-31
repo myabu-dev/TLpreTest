@@ -14,3 +14,12 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/store/login',  'StoreLoginController@index');
+Route::get('/store/register', function () {
+    return view('store_register');
+});
+
+Route::post('/store/login', 'StoreLoginController@login');
+
+Route::post('/store/register', 'StoreRegisterController@registration');
