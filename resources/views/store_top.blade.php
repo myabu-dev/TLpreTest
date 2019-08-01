@@ -15,6 +15,7 @@
 
 <div class="container">
     <p>ログイン中のユーザ: {{$user_id}}</p>
+    <a href="/store/logout">ログアウト</a>
     <input type="hidden" id="user_id" value="{{$user_id}}">
     <hr>
     <h2>新たな商品を登録する</h2>

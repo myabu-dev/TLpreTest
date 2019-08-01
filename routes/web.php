@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,6 +24,14 @@ Route::get('/store/top',  'StoreTopController@index');
 Route::get('/store/login',  'StoreLoginController@index');
 Route::get('/store/register', function () {
     return view('store_register');
+});
+
+Route::get('/store/logout', function (Request $request) {
+    $request->session()->regenerate();
+    $request->session()->flush();
+    setcookie('login_cookie');
+    setcookie('last_login');
+    return redirect('/top');
 });
 
 Route::post('/store/login', 'StoreLoginController@login');
