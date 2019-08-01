@@ -37,7 +37,7 @@
             </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">新規登録</button>
         </form>
-            <a class="register" href="/login">すでに登録済みの方</a>
+            <a class="register" href="/store/login">すでに登録済みの方</a>
     </div>
     <div>
 </body>
