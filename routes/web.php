@@ -21,5 +21,8 @@ Route::get('/store/register', function () {
 });
 
 Route::post('/store/login', 'StoreLoginController@login');
-
 Route::post('/store/register', 'StoreRegisterController@registration');
+
+
+// api
+Route::resource('/api/product','ProductApiController');
