@@ -8,17 +8,16 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script  type="text/javascript" src="{{ asset('js/store_top.js')}}"></script>
+    <script  type="text/javascript" src="{{ asset('js/top.js')}}"></script>
 </head>
 
 <body>
 
 <div class="container">
-    <p>ログイン中のユーザ: {{$user_id}}</p>
-    <input type="hidden" id="user_id" value="{{$user_id}}">
-    <hr>
-    <h2>新たな商品を登録する</h2>
-    <form method="POST" id="new_product" accept-charset="utf-8" return false>
+    <h2>商品を検索絞り込む</h2>            
+    <a href="/store/top">店舗ユーザログイン</a>
+
+    <form method="POST" id="serch_product" accept-charset="utf-8" return false>
         <input type="hidden" id='csrf' value="{{csrf_token()}}"/>
         <div class="form-group row">
         <label for="colFormLabelSm" class="col-sm-2 col-form-label">商品名</label>
@@ -27,33 +26,26 @@
             </div>
         </div>
         <div class="form-group row">
-        <label for="colFormLabelSm" class="col-sm-2 col-form-label">価格</label>
+        <label for="colFormLabelSm" class="col-sm-2 col-form-label">価格下限</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="product_price" placeholder="">
+                <input type="text" class="form-control" id="product_price_min" placeholder="">
             </div>
         </div>
         <div class="form-group row">
-        <label for="colFormLabelSm" class="col-sm-2 col-form-label">商品画像</label>
-        <input type="file" id="productImg" accept=".png, .jpg, .jpeg">
-        </div>
-        <div class="form-group row">
-        <label for="colFormLabelSm" class="col-sm-2 col-form-label">商品説明</label>
+        <label for="colFormLabelSm" class="col-sm-2 col-form-label">価格上限</label>
             <div class="col-sm-10">
-                <div class="form-group green-border-focus">
-                    <textarea class="form-control" id="product_discription" rows="3"></textarea>
-                </div>            
+                <input type="text" class="form-control" id="product_price_max" placeholder="">
             </div>
         </div>
     </form>
+    <button id='search_product_btn'  class="btn btn-secondary btn" onclick="clearSerchForm()">検索条件をクリア</button>
 
-        <hr>
-        <div class="row justify-content-center">
-        <button id='register_product_btn'  class="btn btn-secondary btn-lg">商品を登録</button>
-        </div>
+    <hr>
+    <div class="row justify-content-center">
+    <button id='search_product_btn'  class="btn btn-primary btn-lg" onclick="showStoreProducts()">検索</button>
+    </div>
 
-    <p>すでに登録されている商品</p>
-    <button id='reload_product_btn'  class="btn btn-primary" onclick="showStoreProducts()">リストを更新</button>
-
+    <h3>商品リスト</h3>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -71,9 +63,6 @@
                 </th>
                 <th>
                     説明
-                </th>
-                <th>
-                    操作
                 </th>
             </tr>
         </thead>

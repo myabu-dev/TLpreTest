@@ -61,6 +61,6 @@ class StoreRegisterController extends Controller
         $request->session()->flush();
         $request->session()->put('user_id', $user_id);
 
-        return redirect('/');
+        return redirect('/store/top');
     }
 }

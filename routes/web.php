@@ -12,8 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/top');
 });
+Route::get('/top', function () {
+    return view('top');
+});;
 
 Route::get('/store/top',  'StoreTopController@index');
 Route::get('/store/login',  'StoreLoginController@index');
