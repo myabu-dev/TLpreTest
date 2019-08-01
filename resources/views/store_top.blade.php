@@ -48,13 +48,14 @@
         </div>
     </form>
 
-        <hr>
-        <div class="row justify-content-center">
-        <button id='register_product_btn'  class="btn btn-secondary btn-lg">商品を登録</button>
-        </div>
+    <button class="btn btn-secondary btn" onclick="clearRegisterForm()">フォームをクリア</button>
+    <hr>
+    <div class="row justify-content-center">
+    <button id='register_product_btn'  class="btn btn-primary btn-lg">商品を登録</button>
+    </div>
 
     <p>すでに登録されている商品</p>
-    <button id='reload_product_btn'  class="btn btn-primary" onclick="showStoreProducts()">リストを更新</button>
+    <button id='reload_product_btn'  class="btn btn-success" onclick="showStoreProducts()">リストを更新</button>
 
     <table class="table table-striped">
         <thead>

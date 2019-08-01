@@ -71,7 +71,18 @@ function deleteProducts(product_id){
     })
 }
 
+function clearRegisterForm () {
+    let form = $('#new_product');
 
+    $(form)
+        .find("input, select, textarea")
+        .not(":button, :submit, :reset, :hidden")
+        .val("")
+        .prop("checked", false)
+        .prop("selected", false)
+    ;
+    $(form).find(":radio").filter("[data-default]").prop("checked", true);
+}
 
 $(function(){
 
@@ -107,7 +118,7 @@ $(function(){
             // DBへの登録が成功したか
             if(res['complete_flag']){
                 alert("登録しました");
-                clearForm($('#new_product'));
+                clearRegisterForm ();
                 showStoreProducts();
             }else{
                 for(let i=0; i<res['reasons'].length; i++){
@@ -123,15 +134,5 @@ $(function(){
         })
     });
 
-    function clearForm (form) {
-        $(form)
-            .find("input, select, textarea")
-            .not(":button, :submit, :reset, :hidden")
-            .val("")
-            .prop("checked", false)
-            .prop("selected", false)
-        ;
-        $(form).find(":radio").filter("[data-default]").prop("checked", true);
-    }
 });
 

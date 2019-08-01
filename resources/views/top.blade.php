@@ -39,7 +39,7 @@
             </div>
         </div>
     </form>
-    <button id='search_product_btn'  class="btn btn-secondary btn" onclick="clearSerchForm()">検索条件をクリア</button>
+    <button class="btn btn-secondary btn" onclick="clearSerchForm()">検索条件をクリア</button>
 
     <hr>
     <div class="row justify-content-center">
