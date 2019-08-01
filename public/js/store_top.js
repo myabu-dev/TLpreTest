@@ -107,6 +107,7 @@ $(function(){
             if(res['complete_flag']){
                 alert("登録しました");
                 clearForm($('#new_product'));
+                showStoreProducts();
         // TODOエラー内容を表示する
             }else{
                 alert("登録時にエラーが発生しました");

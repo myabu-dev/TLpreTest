@@ -32,7 +32,7 @@ class ProductApiController extends Controller
 
             if(!empty($store_id)){
                 $store_where = array(
-                    'store_id', '=' ,$store_id
+                    'own_products.store_id', '=' ,$store_id
                 );
                 $where_array[] = $store_where;
             }
@@ -41,7 +41,7 @@ class ProductApiController extends Controller
         // 価格上限の指定
         if(!empty($request->price_max)){
             $price_max_where = array(
-                'price', '<=' ,$request->price_max
+                'products.price', '<=' ,$request->price_max
             );
             $where_array[] = $price_max_where;
         }
@@ -49,7 +49,7 @@ class ProductApiController extends Controller
         // 価格下限の指定
         if(!empty($request->price_min)){
             $price_min_where = array(
-                'price', '>=' ,$request->price_min
+                'products.price', '>=' ,$request->price_min
             );
             $where_array[] = $price_min_where;
         }
@@ -57,15 +57,16 @@ class ProductApiController extends Controller
         // 名前の指定
         if(!empty($request->name)){
             $name_where = array(
-                'name', 'like' , '%'.$request->name.'%'
+                'products.name', 'like' , '%'.$request->name.'%'
             );
             $where_array[] = $name_where;
         }
 
         $product_list = DB::table('products')
-            ->select('store_id', 'name as product_name', 'img_url', 'discription', 'price', 'id as product_id')
+            ->select('own_products.store_id', 'products.name as product_name', 'products.img_url', 'products.discription', 'products.price', 'products.id as product_id')
+            ->leftJoin('own_products', 'products.id', '=', 'own_products.product_id')
             ->where($where_array)
-            ->orderBy('created_at','desc')
+            ->orderBy('products.created_at','desc')
             ->get();
 
         return response()->json(
@@ -118,7 +119,6 @@ class ProductApiController extends Controller
         }
 
         $insert_product_data = array(
-            'store_id' => $user_data->store_id,
             'name' => $request->input('product_name'),
             'img_url' => $img_url,
             'discription' => $request->input('product_discription'),
@@ -199,7 +199,9 @@ class ProductApiController extends Controller
         // user id に紐つくstoreのid
         $user_store_id = DB::table('store_users')->select('store_id')->where('user_id', $user_id)->value('store_id');
         // productに紐つくstore_id
-        $product_store_id = DB::table('products')->select('store_id')->where('id', $product_id)->value('store_id');
+        $product_store_id = DB::table('products')->select('own_products.store_id')
+            ->leftJoin('own_products', 'products.id', '=', 'own_products.product_id')
+            ->where('products.id', $product_id)->value('own_products.store_id');
 
         // userのstoreが管理していない商品の時
         if($user_store_id != $product_store_id){
