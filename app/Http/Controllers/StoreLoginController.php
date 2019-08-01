@@ -20,6 +20,9 @@ class StoreLoginController extends Controller
             $user_id = DB::table('store_users')->select('user_id')->where('login_cookie', '=', $login_cookie)
                     ->where('last_login', '=', $last_login)->value('user_id');
 
+            if(empty($user_id)){
+                return view('store_login');
+            }
             $request->session()->regenerate();
             $request->session()->flush();
             $request->session()->put('user_id', $user_id);
@@ -58,7 +61,7 @@ class StoreLoginController extends Controller
             }
             DB::table('store_users')->where('user_id', $user_id)->update(['last_login' => $last_login, 'login_cookie' => $login_cookie]);
 
-            return redirect('/');
+            return redirect('/store/top');
         }else{
 
             return redirect('/store/login')->with('flash_message', 'IDかパスワードが間違っています。');

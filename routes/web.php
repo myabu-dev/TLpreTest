@@ -15,6 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/store/top',  'StoreTopController@index');
 Route::get('/store/login',  'StoreLoginController@index');
 Route::get('/store/register', function () {
     return view('store_register');
