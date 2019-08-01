@@ -25,7 +25,7 @@
     @endif
         <form action="/store/register/" method="post" class="form-signin" id="user_data_form">
             <input type="hidden" name="_token" value="{{csrf_token()}}">
-    <input type="text" name="store_name" class="form-control input-form" placeholder="店名" value = "{{ old('store_name') }}">
+            <input type="text" name="store_name" class="form-control input-form" placeholder="店名" value = "{{ old('store_name') }}">
             <input type="text" name="user_id" class="form-control input-form" placeholder="管理者ユーザID" value = "{{ old('user_id') }}">
             <input type="password" name="password" class="form-control input-form" placeholder="管理者パスワード">
             <input type="password" name="re_password" class="form-control input-form" placeholder="パスワードをもう一度入力">
