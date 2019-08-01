@@ -2,6 +2,7 @@ function showStoreProducts(){
     $('#search_product_btn').prop("disabled", true);
 
     $('#product_list').empty();
+    $('#errors').empty();
     let name = $('#product_name').val();
     let product_price_min = $('#product_price_min').val();
     let product_price_max = $('#product_price_max').val();
@@ -17,24 +18,31 @@ function showStoreProducts(){
         dataType: 'json',
     })
     .done( (res) => {
-        if(res['product_list'].length==0){
-            $('#product_list').append('<tr><td>商品がありません</td></tr>');
-        }
-        for(let i=0; i<res['product_list'].length; i++){
-            // TODOもっといい書き方を探す
-            let apend_tr = '<tr>';
-            apend_tr += '<td>'+(i)+'</td>'
-            if(res['product_list'][i]['img_url'] == null){
-                apend_tr += '<td>なし</td>'
-            }else{
-                apend_tr += '<td><img src='+res['product_list'][i]['img_url']+'></td>'
+        if(res['complete_flag']){
+            if(res['product_list'].length==0){
+                $('#product_list').append('<tr><td>商品がありません</td></tr>');
             }
-            apend_tr += '<td>'+res['product_list'][i]['product_name']+'</td>'
-            apend_tr += '<td>'+res['product_list'][i]['price']+'</td>'
-            apend_tr += '<td>'+res['product_list'][i]['discription']+'</td>'
-            apend_tr += '</tr>';
-            $('#product_list').append(apend_tr);
+            for(let i=0; i<res['product_list'].length; i++){
+                // TODOもっといい書き方を探す
+                let apend_tr = '<tr>';
+                apend_tr += '<td>'+(i)+'</td>'
+                if(res['product_list'][i]['img_url'] == null){
+                    apend_tr += '<td>なし</td>'
+                }else{
+                    apend_tr += '<td><img src='+res['product_list'][i]['img_url']+'></td>'
+                }
+                apend_tr += '<td>'+res['product_list'][i]['product_name']+'</td>'
+                apend_tr += '<td>'+res['product_list'][i]['price']+'</td>'
+                apend_tr += '<td>'+res['product_list'][i]['discription']+'</td>'
+                apend_tr += '</tr>';
+                $('#product_list').append(apend_tr);
+            }
+        }else{
+            for(let i=0; i<res['reasons'].length; i++){
+                $('#errors').append('<li><span style="color:red">'+res['reasons'][i]+'</span></li>');
+            }
         }
+
     })
     .fail( (err) => {
         alert("データ取得時にエラーが発生しました");

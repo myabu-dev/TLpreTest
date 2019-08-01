@@ -38,8 +38,14 @@ class ProductApiController extends Controller
             }
         }
 
+        //エラーリスト
+        $error_reasons = array();
+
         // 価格上限の指定
         if(!empty($request->price_max)){
+            if(is_numeric($request->price_max) == false){
+                $error_reasons[] = '価格の上限には半角数字をいれてください。';
+            }
             $price_max_where = array(
                 'products.price', '<=' ,$request->price_max
             );
@@ -48,6 +54,9 @@ class ProductApiController extends Controller
 
         // 価格下限の指定
         if(!empty($request->price_min)){
+            if(is_numeric($request->price_min) == false){
+                $error_reasons[] = '価格の下限には半角数字をいれてください。';
+            }
             $price_min_where = array(
                 'products.price', '>=' ,$request->price_min
             );
@@ -62,6 +71,15 @@ class ProductApiController extends Controller
             $where_array[] = $name_where;
         }
 
+        if(!empty($error_reasons)){
+            return response()->json(
+                [ 
+                    'complete_flag' => false ,
+                    'reasons' => $error_reasons,
+                ]
+            );
+        }
+
         $product_list = DB::table('products')
             ->select('own_products.store_id', 'products.name as product_name', 'products.img_url', 'products.discription', 'products.price', 'products.id as product_id')
             ->leftJoin('own_products', 'products.id', '=', 'own_products.product_id')
@@ -71,6 +89,7 @@ class ProductApiController extends Controller
 
         return response()->json(
             [ 
+                'complete_flag' => true ,
                 'product_list'=>$product_list,
             ]
         );
@@ -100,7 +119,7 @@ class ProductApiController extends Controller
             return response()->json(
                 [ 
                     'complete_flag' => false ,
-                    'reason' => "user_id is not set",
+                    'reasons' => ["user_id is not set"],
                 ]
             );
         }
@@ -109,7 +128,50 @@ class ProductApiController extends Controller
         $user_data = DB::table('store_users')->select('id','store_id')->where('user_id', '=', $user_id)->first();
         $user_db_id = $user_data->id; 
 
-        // ToDo　postデータバリデーション
+        // エラーの配列
+        $error_reasons = array();
+
+        $product_name = trim($request->input('product_name'));
+        if(empty($product_name)){
+            $error_reasons[] = "商品名をいれてください。";
+        }else if(mb_strlen($product_name, 'UTF-8') > 128){
+            $error_reasons[] = "商品名が長過ぎます。";
+        }
+
+        $product_discription = trim($request->input('product_discription'));
+        if(empty($product_discription)){
+            $error_reasons[] = "商品説明をいれてください。";
+        }else if(mb_strlen($product_name, 'UTF-8') > 500){
+            $error_reasons[] = "商品説明が長過ぎます。";
+        }
+
+        $product_price = trim($request->input('product_price'));
+        if(empty($product_price)){
+            $error_reasons[] = "商品の価格をいれてください。";
+        }else if(is_numeric($product_price) == false){
+            $error_reasons[] = "商品の価格は半角数字をいれてください。";
+        }
+
+        if(!empty($request->file('img_file'))){
+            $mime_type = $request->file('img_file')->getClientMimeType();
+            if($mime_type!='image/jpeg' && $mime_type!='image/png'){
+                $error_reasons[] = 'ファイルの種類にはjpeg,jpg,pngを指定してください。';
+            }
+            if($request->file('img_file')->getClientSize()/1024/1024 > 3){
+                $error_reasons[] = 'ファイルの大きさは3MB以下にしてください';
+            }
+        }
+
+        
+        if(!empty($error_reasons)){
+            return response()->json(
+                [ 
+                    'complete_flag' => false ,
+                    'reasons' => $error_reasons,
+                ]
+            );
+        }
+
 
         $img_url = NULL;
         if(!empty($request->file('img_file'))){
@@ -119,10 +181,10 @@ class ProductApiController extends Controller
         }
 
         $insert_product_data = array(
-            'name' => $request->input('product_name'),
+            'name' => $product_name,
             'img_url' => $img_url,
-            'discription' => $request->input('product_discription'),
-            'price' => $request->input('product_price'),
+            'discription' => $product_discription,
+            'price' => $product_price,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         );

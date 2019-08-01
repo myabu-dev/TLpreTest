@@ -81,6 +81,7 @@ $(function(){
     $('#register_product_btn').on('click',function(){
         //二重登録防止
         $('#register_product_btn').prop("disabled", true);
+        $('#errors').empty();
 
         let token = $('#csrf').val();
         let img_file = $('#productImg').prop("files")[0];
@@ -108,9 +109,10 @@ $(function(){
                 alert("登録しました");
                 clearForm($('#new_product'));
                 showStoreProducts();
-        // TODOエラー内容を表示する
             }else{
-                alert("登録時にエラーが発生しました");
+                for(let i=0; i<res['reasons'].length; i++){
+                    $('#errors').append('<li><span style="color:red">'+res['reasons'][i]+'</span></li>');
+                }
             }
         })
         .fail( (err) => {

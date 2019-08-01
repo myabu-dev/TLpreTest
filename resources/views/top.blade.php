@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
-    <title>Login</title>
+    <title>TOP</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     
@@ -16,7 +16,8 @@
 <div class="container">
     <h2>商品を検索絞り込む</h2>            
     <a href="/store/top">店舗ユーザログイン</a>
-
+    <ul id="errors" >
+    </ul>
     <form method="POST" id="serch_product" accept-charset="utf-8" return false>
         <input type="hidden" id='csrf' value="{{csrf_token()}}"/>
         <div class="form-group row">
