@@ -4,24 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductApiController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
         $where_array = array();
 
-        // storeの指定
-        if(!empty($request->store)){
-            $store_where = array(
-                'store_id', '=' ,$request->store
-            );
-            $where_array[] = $store_where;
+        // storeの指定　userが指定されていればuserのstore storeが指定されていればstore優先
+        if(!empty($request->user)||empty($request->store)){
+            $store_id;
+            if(!empty($request->user)){
+                $store_id = DB::table('store_users')->select('store_id')->where('user_id', $request->user)->value('store_id');
+            }
+    
+    
+            if(!empty($request->store)){
+                $store_id = $request->store;
+            }
+
+            if(!empty($store_id)){
+                $store_where = array(
+                    'store_id', '=' ,$store_id
+                );
+                $where_array[] = $store_where;
+            }
         }
 
         // 価格上限の指定
@@ -49,7 +63,7 @@ class ProductApiController extends Controller
         }
 
         $product_list = DB::table('products')
-            ->select('store_id', 'name as product_name', 'img_url', 'discription', 'price', 'created_at as create_time')
+            ->select('store_id', 'name as product_name', 'img_url', 'discription', 'price', 'id as product_id')
             ->where($where_array)
             ->orderBy('created_at','desc')
             ->get();
@@ -92,24 +106,21 @@ class ProductApiController extends Controller
 
         // userの情報
         $user_data = DB::table('store_users')->select('id','store_id')->where('user_id', '=', $user_id)->first();
-        $user_db_id = $user_data->id;
+        $user_db_id = $user_data->id; 
 
         // ToDo　postデータバリデーション
-        
-        $img_file_name = NULL;
+
+        $img_url = NULL;
         if(!empty($request->file('img_file'))){
             $img_data = $request->file('img_file');
-            //　拡張子
-            $extension = $img_data->getClientOriginalExtension();
-            // 一意な名前
-            $unique_name = md5(unipid(rand(), true));
-            $img_file_name = $request->file->store('public/product_img/'.$unique_name.'.'.$extension);
+            $img_file_name = $img_data->store('public/product_img');
+            $img_url = Storage::url($img_file_name);
         }
 
         $insert_product_data = array(
             'store_id' => $user_data->store_id,
             'name' => $request->input('product_name'),
-            'img_url' => $img_file_name,
+            'img_url' => $img_url,
             'discription' => $request->input('product_discription'),
             'price' => $request->input('product_price'),
             'created_at' => date('Y-m-d H:i:s'),
@@ -174,8 +185,38 @@ class ProductApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $product_id)
     {
-        //
+        $user_id = $request->session()->get('user_id');
+        if(empty($user_id)){
+            return response()->json(
+                [ 
+                    'complete_flag' => false ,
+                    'reason' => "user_id is not set",
+                ]
+            );
+        }
+        // user id に紐つくstoreのid
+        $user_store_id = DB::table('store_users')->select('store_id')->where('user_id', $user_id)->value('store_id');
+        // productに紐つくstore_id
+        $product_store_id = DB::table('products')->select('store_id')->where('id', $product_id)->value('store_id');
+
+        // userのstoreが管理していない商品の時
+        if($user_store_id != $product_store_id){
+            return response()->json(
+                [ 
+                    'complete_flag' => false ,
+                    'reason' => "this product is not your store's product",
+                ]
+            );
+        }
+
+        DB::table('products')->where('id', $product_id)->delete();
+        DB::table('own_products')->where('product_id', $product_id)->delete();
+
+        return response()->json(
+            [ 'complete_flag' =>  true]
+        );
+
     }
 }

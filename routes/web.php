@@ -25,5 +25,9 @@ Route::post('/store/login', 'StoreLoginController@login');
 Route::post('/store/register', 'StoreRegisterController@registration');
 
 
+// delete のルートがあるのに使えないので暫定の対策
+Route::delete('/api/product/{product_id}','ProductApiController@destroy');
 // api
-Route::resource('/api/product','ProductApiController');
+Route::apiResource('/api/product','ProductApiController');
+
+

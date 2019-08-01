@@ -14,53 +14,46 @@
 <body>
 
 <div class="container">
-    <h2>新たな商品を登録する</h2>
+    <p>ログイン中のユーザ: {{$user_id}}</p>
+    <input type="hidden" id="user_id" value="{{$user_id}}">
     <hr>
-    <form method="POST" action="/upload" enctype="multipart/form-data">
-        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    <h2>新たな商品を登録する</h2>
+    <form method="POST" id="new_product" accept-charset="utf-8" return false>
+        <input type="hidden" id='csrf' value="{{csrf_token()}}"/>
         <div class="form-group row">
-        <label for="colFormLabelSm" class="col-sm-2 col-form-label">Email</label>
+        <label for="colFormLabelSm" class="col-sm-2 col-form-label">商品名</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="formGroupExampleInput" name="article_title" placeholder="タイトル...">
+                <input type="text" class="form-control" id="product_name" placeholder="タイトル...">
             </div>
         </div>
         <div class="form-group row">
         <label for="colFormLabelSm" class="col-sm-2 col-form-label">価格</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="formGroupExampleInput" name="article_title" placeholder="タイトル...">
+                <input type="text" class="form-control" id="product_price" placeholder="タイトル...">
             </div>
         </div>
         <div class="form-group row">
         <label for="colFormLabelSm" class="col-sm-2 col-form-label">商品画像</label>
-            <div class="col-sm-10">
-                <div class="input-group">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="customFile" name="upfile" accept=".md, .html">
-                        <label class="custom-file-label" for="customFile">ファイル選択...</label>
-                    </div>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary reset">Cancel</button>
-                    </div>
-                </div>            
-            </div>
+        <input type="file" id="productImg" accept=".png, .jpg, .jpeg">
         </div>
         <div class="form-group row">
         <label for="colFormLabelSm" class="col-sm-2 col-form-label">商品説明</label>
             <div class="col-sm-10">
                 <div class="form-group green-border-focus">
-                    <textarea class="form-control" id="exampleFormControlTextarea5" rows="3"></textarea>
+                    <textarea class="form-control" id="product_discription" rows="3"></textarea>
                 </div>            
             </div>
         </div>
+    </form>
 
         <hr>
         <div class="row justify-content-center">
-        <button type="submit"  class="btn btn-secondary btn-lg">商品を登録</button>
+        <button id='register_product_btn'  class="btn btn-secondary btn-lg">商品を登録</button>
         </div>
 
-    </form>
     <p>すでに登録されている商品</p>
-    
+    <button id='reload_product_btn'  class="btn btn-primary" onclick="showStoreProducts()">リストを更新</button>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -84,7 +77,7 @@
                 </th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="product_list">
 
         </tbody>
     </table>

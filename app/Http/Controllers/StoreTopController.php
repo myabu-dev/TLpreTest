@@ -14,6 +14,6 @@ class StoreTopController extends Controller
         if(empty($user_id)){
             return redirect('/store/login');
         }
-        return view('store_top');
+        return view('store_top')->with('user_id',$user_id);
     }
 }
